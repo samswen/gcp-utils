@@ -34,17 +34,16 @@ const bucket = 'gcp-utils-test';
 const local_file_pathname = './test/upload_file_test.txt';
 const dest_file_pathname = 'test-subfolder/upload_file_test.txt';
 
-const result1 = await upload_file(config, local_file_pathname, bucket, dest_file_pathname);
+await upload_file(config, local_file_pathname, bucket, dest_file_pathname);
+
+const result1 = await file_exists(config, bucket, dest_file_pathname);
 // return true
+
+await delete_file(config, bucket, dest_file_pathname);
 
 const result2 = await file_exists(config, bucket, dest_file_pathname);
-// return true
-
-onst result3 = await file_exists(config, bucket, dest_file_pathname);
-// return true
+// return false
 
 const topic = 'gcp-utils-test';
-const result = await publish_to_topic(config, topic, {test: 'done'});
-//return message id number
-
+await publish_to_topic(config, topic, {test: 'done'});
 </pre>
