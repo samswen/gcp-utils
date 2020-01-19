@@ -8,9 +8,9 @@ It collects util functions: file_exists, upload_file, download_file, delete_file
 
 # how to use
 
-1. create a service account key file from google console and save as *serviceAccount.json*
+1) create a service account key file from google console and save as *serviceAccount.json*
 
-2. prepare config.js as following:
+2) prepare config.js as following:
 
 <pre>
 'use strict';
@@ -22,7 +22,7 @@ const config = {
 module.exports = config;
 </pre>
 
-3. code sample:
+3) code sample:
 
 <pre>
 const { file_exists, upload_file, delete_file, publish_to_topic } = require('@samwen/gpc-utils');
