@@ -25,7 +25,7 @@ module.exports = config;
 3. code sample:
 
 <pre>
-const { file_exists, upload_file, delete_file } = require('@samwen/gpc-utils');
+const { file_exists, upload_file, delete_file, publish_to_topic } = require('@samwen/gpc-utils');
 
 const ConfigUtil = require('@samwen/config-util');
 const config = new ConfigUtil(require('./config'));
@@ -39,5 +39,12 @@ const result1 = await upload_file(config, local_file_pathname, bucket, dest_file
 
 const result2 = await file_exists(config, bucket, dest_file_pathname);
 // return true
+
+onst result3 = await file_exists(config, bucket, dest_file_pathname);
+// return true
+
+const topic = 'gcp-utils-test';
+const result = await publish_to_topic(config, topic, {test: 'done'});
+//return message id number
 
 </pre>
