@@ -10,11 +10,11 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 
+const topic = config.get('topic');
+
 describe('test publish_to_topic', () => {
 
     it('verifies it should send the data to the topic', async () => {
-
-        const topic = 'gcp-utils-test';
 
         const result = await publish_to_topic(config, topic, {purpose: 'test'});
         //console.log(result);

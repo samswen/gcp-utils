@@ -81,6 +81,7 @@ async function download_file(config, local_file_pathname, bucket_name, pathname)
         await bucket.file(pathname).download(options);
         return true;
     } catch(err) {
+        console.log('dowload_file3');
         console.error(err);
         return err.message;
     }

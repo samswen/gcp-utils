@@ -1,6 +1,6 @@
 {
   "name": "@samwen/gcp-utils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "collection of gcp storage and pub/sub utils",
   "main": "src/index.js",
   "directories": {
@@ -39,6 +39,7 @@
     "@samwen/config-util": "^1.0.1",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
+    "fs": "0.0.1-security",
     "mocha": "^6.2.2",
     "sinon": "^8.0.2"
   }

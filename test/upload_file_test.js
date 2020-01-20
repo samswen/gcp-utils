@@ -10,11 +10,12 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 
+const bucket = config.get('bucket');
+
 describe('test upload_file', () => {
 
     it('verifies it should uploade the file to a subfolder in the bucket', async () => {
 
-        const bucket = 'gcp-utils-test';
         const local_file_pathname = './test/upload_file_test.txt';
         const dest_file_pathname = 'test-subfolder/upload_file_test_with_metadata.txt';
 
@@ -30,7 +31,6 @@ describe('test upload_file without metadata', () => {
 
     it('verifies it should uploade the file to a subfolder in the bucket', async () => {
 
-        const bucket = 'gcp-utils-test';
         const local_file_pathname = './test/upload_file_test.txt';
         const dest_file_pathname = 'test-subfolder/upload_file_test.txt';
 

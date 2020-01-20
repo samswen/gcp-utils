@@ -10,11 +10,12 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 
+const bucket = config.get('bucket');
+
 describe('test file_exists', () => {
 
     it('verifies it should false', async () => {
 
-        const bucket = 'gcp-utils-test';
         const dest_file_pathname = 'file_not_exist.txt';
 
         const result1 = await file_exists(config, bucket, dest_file_pathname);
@@ -29,7 +30,6 @@ describe('test file_exists', () => {
 
     it('verifies it should true', async () => {
 
-        const bucket = 'gcp-utils-test';
         const local_file_pathname = './test/upload_file_test.txt';
         const dest_file_pathname = 'test-subfolder/upload_file_test.txt';
 
@@ -50,7 +50,6 @@ describe('test file_exists', () => {
 
     it('verifies it should false', async () => {
 
-        const bucket = 'gcp-utils-test';
         const dest_file_pathname = 'test-subfolder/upload_file_test.txt';
 
         const result1 = await delete_file(config, bucket, dest_file_pathname);
