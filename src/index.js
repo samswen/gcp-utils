@@ -2,7 +2,6 @@
 
 const { Storage } = require('@google-cloud/storage');
 const { PubSub } = require('@google-cloud/pubsub');
-const grpc = require('grpc');
 const axios = require('axios');
 
 module.exports = {
@@ -19,7 +18,7 @@ function get_storage(config) {
     if (storage) {
         return storage;
     }
-    storage = new Storage({grpc: grpc, keyFilename: config.get('key_filepath')});
+    storage = new Storage({keyFilename: config.get('key_filepath')});
     return storage;
 }
 
@@ -27,7 +26,7 @@ function get_pubsub(config) {
     if (pubsub) {
         return pubsub;
     }
-    pubsub = new PubSub({grpc: grpc, keyFilename: config.get('key_filepath')});
+    pubsub = new PubSub({keyFilename: config.get('key_filepath')});
     return pubsub;
 }
 

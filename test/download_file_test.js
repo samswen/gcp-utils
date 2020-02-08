@@ -40,8 +40,8 @@ describe('test download an existing file', () => {
 
     it('verifies it should no zero size file', async () => {
         
-        const remote_file_pathname = 'suppliers.js';
-        const saved_file_pathname = '/tmp/suppliers.txt';
+        const remote_file_pathname = 'upload_file_test.txt';
+        const saved_file_pathname = '/tmp/test.txt';
         const result1 = await download_file(config, saved_file_pathname, bucket, remote_file_pathname)
         assert.isNotNull(result1);
         expect(result1).to.be.an('boolean');
