@@ -1,6 +1,6 @@
 {
   "name": "@samwen/gcp-utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "collection of gcp storage and pub/sub utils",
   "main": "src/index.js",
   "directories": {

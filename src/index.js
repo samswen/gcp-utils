@@ -46,16 +46,24 @@ async function file_exists(config, bucket_name, pathname, retries = 3) {
                 return false;
             }
         } catch(err) {
-            console.error(err);
-            const tries = i + 1;
-            if (tries < retries) {
-                const secs = tries * 30;
-                console.log('will retry, after ' + secs + ' secs');
-                await sleep(secs * 1000);
+            console.error(err.message);
+            if (err && err.code) {
+                if  (err.code === 404) {
+                    return false;
+                }
+                if (err.code === 408 || err.code === 429 || err.code >= 500) {
+                    const tries = i + 1;
+                    if (tries < retries) {
+                        const secs = tries * 30;
+                        console.log('will retry, after ' + secs + ' secs');
+                        await sleep(secs * 1000);
+                        continue;
+                    }
+                }
             }
+            return false;
         }
     }
-    return false;
 }
 
 async function publish_to_topic(config, topic, data) {
@@ -83,15 +91,22 @@ async function upload_file(config, local_file_pathname, bucket_name, pathname, m
             await bucket.upload(local_file_pathname, options);
             return true;
         } catch(err) {
-            console.error(err);
-            const tries = i + 1;
-            if (tries < retries) {
-                const secs = tries * 30;
-                console.log('will retry, after ' + secs + ' secs');
-                await sleep(secs * 1000);
-            } else {
-                return err.message;
+            console.error(err.message);
+            if (err && err.code) {
+                if  (err.code === 404) {
+                    return false;
+                }
+                if (err.code === 408 || err.code === 429 || err.code >= 500) {
+                    const tries = i + 1;
+                    if (tries < retries) {
+                        const secs = tries * 30;
+                        console.log('will retry, after ' + secs + ' secs');
+                        await sleep(secs * 1000);
+                        continue;
+                    }
+                }
             }
+            return err.message;
         }
     }
 }
@@ -104,15 +119,22 @@ async function download_file(config, local_file_pathname, bucket_name, pathname,
             await bucket.file(pathname).download(options);
             return true;
         } catch(err) {
-            console.error(err);
-            const tries = i + 1;
-            if (tries < retries) {
-                const secs = tries * 30;
-                console.log('will retry, after ' + secs + ' secs');
-                await sleep(secs * 1000);
-            } else {
-                return err.message;
+            console.error(err.message);
+            if (err && err.code) {
+                if  (err.code === 404) {
+                    return err.message;
+                }
+                if (err.code === 408 || err.code === 429 || err.code >= 500) {
+                    const tries = i + 1;
+                    if (tries < retries) {
+                        const secs = tries * 30;
+                        console.log('will retry, after ' + secs + ' secs');
+                        await sleep(secs * 1000);
+                        continue;
+                    }
+                }
             }
+            return err.message;
         }
     }
 }
@@ -124,15 +146,22 @@ async function delete_file(config, bucket_name, pathname, retries = 3) {
             await bucket.file(pathname).delete();
             return true;
         } catch(err) {
-            console.error(err);
-            const tries = i + 1;
-            if (tries < retries) {
-                const secs = tries * 30;
-                console.log('will retry, after ' + secs + ' secs');
-                await sleep(secs * 1000);
-            } else {
-                return err.message;
+            console.error(err.message);
+            if (err && err.code) {
+                if (err && err.code && err.code === 404) {
+                    return true;
+                }
+                if (err.code === 408 || err.code === 429 || err.code >= 500) {
+                    const tries = i + 1;
+                    if (tries < retries) {
+                        const secs = tries * 30;
+                        console.log('will retry, after ' + secs + ' secs');
+                        await sleep(secs * 1000);
+                        continue;
+                    }
+                }
             }
+            return err.message;
         }
     }
 }

@@ -51,3 +51,16 @@ describe('test download an existing file', () => {
         expect(stats.size).greaterThan(0);
     });
 });
+
+describe('test download a non-existing file', () => {
+
+    it('verifies it should return the message', async () => {
+        
+        const remote_file_pathname = 'upload_file_test_non-existing.txt';
+        const saved_file_pathname = '/tmp/test.txt';
+        const result1 = await download_file(config, saved_file_pathname, bucket, remote_file_pathname)
+        //console.log(result1);
+        assert.isNotNull(result1);
+        assert.isTrue(result1.startsWith('No such object: '));
+    });
+});
