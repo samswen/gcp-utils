@@ -30,19 +30,32 @@ function get_pubsub(config) {
     return pubsub;
 }
 
-async function file_exists(config, bucket_name, pathname) {
+async function file_exists(config, bucket_name, pathname, retries = 3) {
     const bucket = get_storage(config).bucket(bucket_name);
-    const [files] = await bucket.getFiles({ prefix: pathname });
-    if (files.length === 0) {
-        return false;
-    } else {
-        for (let file of files) {
-            if (file.name === pathname) {
-                return true;
+    for (let i = 0; i < retries; i++) {
+        try {
+            const [files] = await bucket.getFiles({ prefix: pathname });
+            if (files.length === 0) {
+                return false;
+            } else {
+                for (let file of files) {
+                    if (file.name === pathname) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        } catch(err) {
+            console.error(err);
+            const tries = i + 1;
+            if (tries < retries) {
+                const secs = tries * 30;
+                console.log('will retry, after ' + secs + ' secs');
+                await sleep(secs * 1000);
             }
         }
-        return false;
     }
+    return false;
 }
 
 async function publish_to_topic(config, topic, data) {
@@ -59,39 +72,71 @@ async function publish_to_topic(config, topic, data) {
     }
 }
 
-async function upload_file(config, local_file_pathname, bucket_name, pathname, metadata = null) {
-    try {
-        const bucket = get_storage(config).bucket(bucket_name);
-        const options = {destination: pathname, resumable: false};
-        if (metadata) {
-            options.metadata = metadata;
+async function upload_file(config, local_file_pathname, bucket_name, pathname, metadata = null, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const bucket = get_storage(config).bucket(bucket_name);
+            const options = {destination: pathname, resumable: false};
+            if (metadata) {
+                options.metadata = metadata;
+            }
+            await bucket.upload(local_file_pathname, options);
+            return true;
+        } catch(err) {
+            console.error(err);
+            const tries = i + 1;
+            if (tries < retries) {
+                const secs = tries * 30;
+                console.log('will retry, after ' + secs + ' secs');
+                await sleep(secs * 1000);
+            } else {
+                return err.message;
+            }
         }
-        await bucket.upload(local_file_pathname, options);
-        return true;
-    } catch(err) {
-        return err.message;
     }
 }
 
-async function download_file(config, local_file_pathname, bucket_name, pathname) {
-    try {
-        const bucket = get_storage(config).bucket(bucket_name);
-        const options = {destination: local_file_pathname, resumable: false};
-        await bucket.file(pathname).download(options);
-        return true;
-    } catch(err) {
-        console.log('dowload_file3');
-        console.error(err);
-        return err.message;
+async function download_file(config, local_file_pathname, bucket_name, pathname, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const bucket = get_storage(config).bucket(bucket_name);
+            const options = {destination: local_file_pathname, resumable: false};
+            await bucket.file(pathname).download(options);
+            return true;
+        } catch(err) {
+            console.error(err);
+            const tries = i + 1;
+            if (tries < retries) {
+                const secs = tries * 30;
+                console.log('will retry, after ' + secs + ' secs');
+                await sleep(secs * 1000);
+            } else {
+                return err.message;
+            }
+        }
     }
 }
 
-async function delete_file(config, bucket_name, pathname) {
-    try {
-        const bucket = get_storage(config).bucket(bucket_name);
-        await bucket.file(pathname).delete();
-        return true;
-    } catch(err) {
-        return err.message;
+async function delete_file(config, bucket_name, pathname, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const bucket = get_storage(config).bucket(bucket_name);
+            await bucket.file(pathname).delete();
+            return true;
+        } catch(err) {
+            console.error(err);
+            const tries = i + 1;
+            if (tries < retries) {
+                const secs = tries * 30;
+                console.log('will retry, after ' + secs + ' secs');
+                await sleep(secs * 1000);
+            } else {
+                return err.message;
+            }
+        }
     }
+}
+
+function sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
