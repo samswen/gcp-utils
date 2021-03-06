@@ -9,7 +9,8 @@ module.exports = {
     upload_file,
     download_file,
     delete_file,
-    publish_to_topic
+    publish_to_topic,
+    pull_from_topic
 };
 
 let storage = null, pubsub = null;
@@ -78,6 +79,32 @@ async function publish_to_topic(config, topic, data) {
         const buffer = Buffer.from(JSON.stringify(data));
         return await get_pubsub(config).topic(topic).publish(buffer);
     }
+}
+
+function pull_from_topic(config, topic, timeout = 10, limit = 2048) {
+    return new Promise((resolve) => {
+        const options = {flowControl: { maxMessages: limit }};
+        const pubsub = get_pubsub(config);
+        const subscription = pubsub.subscription(topic, options);
+        const messages = [];
+        subscription.on('message', (message) => {
+            messages.push(message);
+            message.ack();
+        });
+        let done = false;
+        for (let i = 0; i < timeout; i += 1) {
+            setTimeout(() => {
+                if (i === timeout - 1 || messages.length === limit) {
+                    subscription.close();
+                    resolve(messages);
+                    done = true;
+                }
+            }, 1000);
+            if (done) {
+                break;
+            }
+        }
+    });
 }
 
 async function upload_file(config, local_file_pathname, bucket_name, pathname, metadata = null, retries = 3) {
