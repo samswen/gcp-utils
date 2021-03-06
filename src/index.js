@@ -10,7 +10,7 @@ module.exports = {
     download_file,
     delete_file,
     publish_to_topic,
-    pull_from_topic
+    pull_from_subscription
 };
 
 let storage = null, pubsub = null;
@@ -81,29 +81,30 @@ async function publish_to_topic(config, topic, data) {
     }
 }
 
-function pull_from_topic(config, topic, timeout = 10, limit = 2048) {
+function pull_from_subscription(config, name, timeout = 3000, limit = 2048) {
     return new Promise((resolve) => {
         const options = {flowControl: { maxMessages: limit }};
         const pubsub = get_pubsub(config);
-        const subscription = pubsub.subscription(topic, options);
+        const subscription = pubsub.subscription(name, options);
         const messages = [];
         subscription.on('message', (message) => {
-            messages.push(message);
-            message.ack();
-        });
-        let done = false;
-        for (let i = 0; i < timeout; i += 1) {
-            setTimeout(() => {
-                if (i === timeout - 1 || messages.length === limit) {
-                    subscription.close();
-                    resolve(messages);
-                    done = true;
-                }
-            }, 1000);
-            if (done) {
-                break;
+            try {
+                messages.push(JSON.parse(message.data.toString()));
+            } catch(err) {
+                console.error(err);
+            } finally {
+                message.ack();
             }
-        }
+        });
+        let i = 0;
+        const timer = setInterval(() => {
+            if (i >= timeout || messages.length >= limit) {
+                subscription.close();
+                resolve(messages);
+                clearInterval(timer);
+            }
+            i += 500;
+        }, 500);
     });
 }
 

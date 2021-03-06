@@ -1,6 +1,6 @@
 {
   "name": "@samwen/gcp-utils",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "collection of gcp storage and pub/sub utils",
   "main": "src/index.js",
   "directories": {
@@ -22,7 +22,7 @@
     "download_file",
     "delete_file",
     "publish_to_topic",
-    "pull_from_topic"
+    "pull_from_subscription"
   ],
   "author": "Sam Wen",
   "license": "ISC",
