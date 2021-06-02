@@ -1,6 +1,6 @@
 {
   "name": "@samwen/gcp-utils",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "collection of gcp storage and pub/sub utils",
   "main": "src/index.js",
   "directories": {
@@ -31,13 +31,13 @@
   },
   "homepage": "https://github.com/samswen/gcp-utils#readme",
   "dependencies": {
-    "@google-cloud/pubsub": "^1.5.0",
-    "@google-cloud/storage": "^4.3.1",
-    "axios": "^0.19.2"
+    "@google-cloud/pubsub": "^2.12.0",
+    "@google-cloud/storage": "^5.8.5",
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@samwen/config-util": "^1.0.5",
-    "chai": "^4.3.3",
+    "chai": "^4.3.4",
     "eslint": "^6.8.0",
     "fs": "0.0.1-security",
     "mocha": "^6.2.3",
